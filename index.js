@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const sqlite3 = require('sqlite3').verbose();
+const Database = require('better-sqlite3');
 require('dotenv').config();
 
 const app = express();
@@ -11,18 +11,16 @@ app.use(cors());
 app.use(express.json());
 
 // Set up SQLite Database
-const db = new sqlite3.Database('./database.db');
+const db = new Database('./database.db');
 
 // Initialize the database table
-db.serialize(() => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS data (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT,
-      message TEXT
-    )
-  `);
-});
+db.exec(`
+  CREATE TABLE IF NOT EXISTS data (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    message TEXT
+  )
+`);
 
 // Make database accessible in routes
 app.use((req, res, next) => {
